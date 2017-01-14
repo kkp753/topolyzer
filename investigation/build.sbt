@@ -1,0 +1,6 @@
+
+scalacOptions ++= Seq(
+	"-print"
+)
+
+
