@@ -1,26 +1,113 @@
 
+package net.mossyfeather.topolyzer
 
 import scalafx.Includes._
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
+import scalafx.scene.paint.Color
+import scalafx.scene.shape.{Circle, CubicCurve}
+//import scalafx.scene.input.MouseEvent
 
-import scalafx.scene.Scene
-import scalafx.scene.canvas.Canvas
-import scalafx.scene.paint._
-import scalafx.scene.input.MouseEvent
+import scalafx.scene.text.Font
 
-import scalafx.geometry.{Insets}
+import scalafx.scene.control.Label
 
-object Test {
-	def main(args: Array[String]) {
-		
-		
-		javafx.application.Application.launch(classOf[AppHelper], args: _*)
-	}
+class GridView extends scalafx.scene.layout.Pane {
 
+
+	val routers = List(new Router("a",100,100), new Router("b",200,200))
+
+	val links   = List(new Link(100,100,200,200))
+
+	children = links ++ routers
+
+	
 }
 
-class GridView extends JFXApp {
+class Router(text:String) extends scalafx.scene.layout.StackPane() {
+//------------------------------------------------------------------------
+//  Members definition/construction
+//------------------------------------------------------------------------
+	val r = 20
+	val l = new Label(text) {
+		textAlignment = scalafx.scene.text.TextAlignment.Center
+		Option(this.getClass.getResource("fonts/Cica_v1.0.3/Cica-Regular.ttf")) match {
+			case Some(url) =>
+				font = Font.loadFont(url.toExternalForm, 12)
+			case _         =>
+				font = Font.default
+		}
 
+	}
+
+	// constructor Circle() is NOT exist. Why?
+	val g = new Circle() {
+		radius  = r
+		fill    = Color.White
+		stroke  = Color.Black
+	}
+
+	children = Array(g, l)
+	//background = RegionVisualizer(Color.Blue)
+
+//------------------------------------------------------------------------
+//  Functions
+//------------------------------------------------------------------------
+
+	def x_=(v:Double) { layoutX = v - r }
+	def y_=(v:Double) { layoutY = v - r }
+
+	def this(text:String, x:Int, y:Int) {
+		this(text)
+		layoutX = x - r
+		layoutY = y - r
+	}
+}
+
+class Link extends CubicCurve {
+	
+	stroke      = Color.Black
+	strokeWidth = 2
+	fill        = Color.Transparent
+	
+
+	def this(fx:Double,fy:Double,tx:Double,ty:Double) {
+		this()
+		set(fx,fy,tx,ty)
+	}
+	
+	def set(fx:Double,fy:Double,tx:Double,ty:Double) {
+		startX = fx
+		startY = fy
+		endX   = tx
+		endY   = ty
+		calcControl(fx,fy,tx,ty)
+	}
+	
+
+	// 長いリンクほどcベクトルを大きめにとるってのもありかも
+	def calcControl(fx:Double,fy:Double,tx:Double,ty:Double) {
+		val dx = tx - fx
+		val dy = ty - fy
+		val v  = Vec2D(dx, dy)
+		val n  = v.normal()
+		
+		val c1 = n*0.15 + v*0.2
+		val c2 = n*0.15 - v*0.2
+
+		controlX1 = fx + c1.x
+		controlY1 = fy + c1.y
+		
+		controlX2 = tx + c2.x
+		controlY2 = ty + c2.y
+	}
+
+
+	case class Vec2D (val x:Double, val y:Double) {
+		
+		def +(a:Vec2D)  = Vec2D(x+a.x, y+a.y)
+		def -(a:Vec2D)  = Vec2D(x-a.x, y-a.y)
+		def *(a:Double) = Vec2D(x*a, y*a)
+		def *(a:Vec2D)  = Vec2D(x*a.x - y*a.y, x*a.y + a.x*y)
+		def normal()    = this * Vec2D(0,1) // rotate pi/2 rad
+	}
 	
 }

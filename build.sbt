@@ -20,4 +20,4 @@ libraryDependencies ++= Seq(
 
 unmanagedJars in Compile += file(sys.props("java.home") + "/lib/ext/jfxrt.jar")
 
-excludeFilter in unmanagedSources := HiddenFileFilter || "NBTViewer.scala" || "GridView.scala"
+excludeFilter in unmanagedSources := HiddenFileFilter || "NBTViewer.scala"
