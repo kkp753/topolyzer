@@ -6,6 +6,8 @@ import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.layout.BorderPane
 
+import scalafx.scene.input.MouseEvent
+
 import scalafx.scene.shape.Circle
 import scalafx.scene.layout.Pane
 import scalafx.scene.layout.Background
@@ -18,10 +20,17 @@ object Topolyzer extends JFXApp {
 
 	val grid = new GridView()
 
+	var n = 1
+
 	stage = new JFXApp.PrimaryStage {
 		title  = "Topolyzer GUI"
-		width  = 400
+		width  = 500
 		height = 500
+
+		val torus = NetBuilder.genTorus(4,4)
+		torus.printFeatures()
+		grid.update(torus)
+		grid.onMouseClicked = incrtest(_)
 
 		scene  = new Scene(){
 			// Scene.content : Scene.root.getChildren
@@ -32,6 +41,8 @@ object Topolyzer extends JFXApp {
 		}
 	}
 
+	def incrtest(ev:MouseEvent) {
+	}
 }
 
 

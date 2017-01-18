@@ -12,6 +12,10 @@ scalacOptions ++= Seq(
 	"-Xlint"
 )
 
+//javaOptions ++= Seq(
+//	"-Xmx8G"
+//)
+
 libraryDependencies ++= Seq(
 	"org.scalafx" %% "scalafx" % "8.0.102-R11"
 //	,"com.jsuereth" %% "scala-arm" % "2.0",

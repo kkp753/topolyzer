@@ -12,17 +12,29 @@ import scalafx.scene.control.Label
 
 class GridView extends scalafx.scene.layout.Pane {
 
-
-	val routers = List(new Router("a",100,100), new Router("b",200,200))
-
-	val links   = List(new Link(100,100,200,200))
-
-	children = links ++ routers
-
+//	val routers = List(new RouterNode("a",100,100))
+//	val links   = List(new LinkNode(100,100,200,200))
 	
+	def update(net:Net) {
+		
+		val links   = net.links.toList.map(l =>
+			new LinkNode(c2x(l.r1.c), r2y(l.r1.r), c2x(l.r2.c), r2y(l.r2.r))
+		)
+		val routers = net.routers.toList.zipWithIndex.map{ case (r,i) =>
+			new RouterNode(net.aformat(i), c2x(r.c), r2y(r.r))
+		}
+
+		children = links ++ routers
+	}
+
+	val xofs = 100
+	val yofs = 100
+
+	def c2x(c:Int) = xofs + c*100
+	def r2y(r:Int) = yofs + r*100
 }
 
-class Router(text:String) extends scalafx.scene.layout.StackPane() {
+class RouterNode(text:String) extends scalafx.scene.layout.StackPane() {
 //------------------------------------------------------------------------
 //  Members definition/construction
 //------------------------------------------------------------------------
@@ -62,7 +74,7 @@ class Router(text:String) extends scalafx.scene.layout.StackPane() {
 	}
 }
 
-class Link extends CubicCurve {
+class LinkNode extends CubicCurve {
 	
 	stroke      = Color.Black
 	strokeWidth = 2
@@ -102,7 +114,6 @@ class Link extends CubicCurve {
 
 
 	case class Vec2D (val x:Double, val y:Double) {
-		
 		def +(a:Vec2D)  = Vec2D(x+a.x, y+a.y)
 		def -(a:Vec2D)  = Vec2D(x-a.x, y-a.y)
 		def *(a:Double) = Vec2D(x*a, y*a)
